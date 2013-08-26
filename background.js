@@ -150,16 +150,12 @@ function Pomodoro(options) {
 		this.mostRecentMode = this.nextMode;
 	}
 	
-	this.nextMode = mostRecentMode;	
-	
-	console.log("2- Most Recent " + this.mostRecentMode);
-	console.log("2- Next Mode " + this.nextMode);
+	this.nextMode = mostRecentMode;
 
     for(var key in options.timer) {
       timerOptions[key] = options.timer[key];
     }
     timerOptions.type = this.mostRecentMode;
-	console.log("timer " + timerOptions.type);
     timerOptions.duration = options.getDurations()[this.mostRecentMode];
     this.running = true;
     this.currentTimer = new Pomodoro.Timer(this, timerOptions);
