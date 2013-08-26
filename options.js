@@ -33,6 +33,7 @@ var form = document.getElementById('options-form'),
   
 durationEls['work'] = document.getElementById('work-duration');
 durationEls['break'] = document.getElementById('break-duration');
+durationEls['longbreak'] = document.getElementById('long-break-duration');
 
 var TIME_REGEX = /^([0-9]+)(:([0-9]{2}))?$/;
 
@@ -60,6 +61,7 @@ form.onsubmit = function () {
   background.setPrefs({
     siteList:           siteListEl.value.split(/\r?\n/),
     durations:          durations,
+	workCount:			0,
     showNotifications:  showNotificationsEl.checked,
     shouldRing:         shouldRingEl.checked,
     clickRestarts:      clickRestartsEl.checked,
@@ -115,6 +117,11 @@ startCallbacks.work = function () {
 }
 
 startCallbacks.break = function () {
+  document.body.removeAttribute('class');
+  setInputDisabled(false);
+}
+
+startCallbacks.longbreak = function () {
   document.body.removeAttribute('class');
   setInputDisabled(false);
 }

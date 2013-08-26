@@ -16,6 +16,10 @@
     "message": "break",
     "description": "The name of the break timer"
   },
+  "long_break": {
+	"message": "long Break",
+	"description": "the name of the long break timer"
+  },
   "minutes": {
     "message": "minutes",
     "description": "The name of the time interval representing 60 seconds"

@@ -7,7 +7,8 @@
 var PREFS = loadPrefs(),
 BADGE_BACKGROUND_COLORS = {
   work: [192, 0, 0, 255],
-  break: [0, 192, 0, 255]
+  break: [0, 192, 0, 255],
+  longbreak: [0, 192, 0, 255],
 }, RING = new Audio("ring.ogg"),
 ringLoaded = false;
 
@@ -33,7 +34,8 @@ function defaultPrefs() {
     ],
     durations: { // in seconds
       work: 25 * 60,
-      break: 5 * 60
+      break: 5 * 60,
+	  longbreak: 15 * 60
     },
     shouldRing: true,
     clickRestarts: false,
@@ -105,7 +107,7 @@ var ICONS = {
     PENDING: {}
   },
   FULL: {},
-}, iconTypeS = ['default', 'work', 'break'],
+}, iconTypeS = ['default', 'work', 'break', 'longbreak'],
   iconType;
 for(var i in iconTypeS) {
   iconType = iconTypeS[i];
@@ -130,14 +132,34 @@ function Pomodoro(options) {
   }
 
   this.start = function () {
-    var mostRecentMode = this.mostRecentMode, timerOptions = {};
-    this.mostRecentMode = this.nextMode;
-    this.nextMode = mostRecentMode;
+  
+	if(this.nextMode == 'work')
+	{
+		PREFS.workCount = PREFS.workCount + 1;
+	}   
+  
+    var mostRecentMode = this.mostRecentMode, timerOptions = {};		
+	
+	if(PREFS.workCount >= 4 && this.mostRecentMode == 'work')
+	{
+		this.mostRecentMode = 'longbreak';
+		PREFS.workCount = 0;
+	}
+	else
+	{
+		this.mostRecentMode = this.nextMode;
+	}
+	
+	this.nextMode = mostRecentMode;	
+	
+	console.log("2- Most Recent " + this.mostRecentMode);
+	console.log("2- Next Mode " + this.nextMode);
 
     for(var key in options.timer) {
       timerOptions[key] = options.timer[key];
     }
     timerOptions.type = this.mostRecentMode;
+	console.log("timer " + timerOptions.type);
     timerOptions.duration = options.getDurations()[this.mostRecentMode];
     this.running = true;
     this.currentTimer = new Pomodoro.Timer(this, timerOptions);
@@ -180,6 +202,7 @@ Pomodoro.Timer = function Timer(pomodoro, options) {
     timer.timeRemaining--;
     options.onTick(timer);
     if(timer.timeRemaining <= 0) {
+	  
       clearInterval(tickInterval);
       pomodoro.onTimerEnd(timer);
       options.onEnd(timer);
